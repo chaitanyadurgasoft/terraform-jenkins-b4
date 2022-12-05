@@ -74,7 +74,7 @@ resource "aws_security_group" "user_defined" {
 
 resource "aws_instance" "Devops-Webserver" {
   ami                         = var.imagename
-  key_name                    = "AWSB4-KEY"
+  key_name                    = "AWSB1ONLINE-KEY"
   instance_type               = "t2.micro"
   availability_zone           = var.az
   associate_public_ip_address = true
