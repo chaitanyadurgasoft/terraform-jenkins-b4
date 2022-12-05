@@ -1,0 +1,46 @@
+{
+    "_comment": "Create a AWS AMI with Ubuntu",
+    "variables": {
+        "region": "",
+        "source_ami": "",
+        "instance_type": "",
+        "vpc_id": "",
+        "subnet_id": ""
+    },
+    "_comment1": "packer build -var \"aws_secret_key=foo\" packer.json",
+    "_comment2": "packer build -var-file packer-vars.json packer.json",
+    "builders": [
+        {
+            "type": "amazon-ebs",
+            "region": "{{user `region`}}",
+            "source_ami": "{{user `source_ami`}}",
+            "instance_type": "{{user `instance_type`}}",
+            "ssh_username": "ubuntu",
+            "ami_name": "Awsb4-Test-Build-{{isotime | clean_resource_name}}",
+            "vpc_id": "{{user `vpc_id`}}",
+            "subnet_id": "{{user `subnet_id`}}",
+            "tags": {
+                "Name": "Awsb4-Test-Build-{{isotime | clean_resource_name}}"
+            }
+        }
+    ],
+    "provisioners": [
+        {
+            "type": "shell",
+            "inline": [
+                "sleep 30",
+                "sudo apt update -y",
+                "sudo apt install nginx -y",
+                "sudo apt install git -y",
+                "sudo git clone https://github.com/chaitanyadurgasoft/website.git",
+                "sudo rm -rf /var/www/html/index.nginx-debian.html",
+                "sudo cp website/index.html /var/www/html/index.nginx-debian.html",
+                "sudo cp website/aws.png /var/www/html/aws.png",
+                "sudo cp website/cloud.jpg /var/www/html/cloud.jpg",
+                "sudo service nginx start",
+                "sudo systemctl enable nginx",
+                "curl https://get.docker.com | bash"
+            ]
+        }
+    ]
+}
